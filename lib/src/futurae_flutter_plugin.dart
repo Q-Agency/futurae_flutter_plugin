@@ -41,4 +41,17 @@ class FuturaeFlutterPlugin {
 
   Stream<Map<dynamic, dynamic>> onApproveAuthentication() =>
       FuturaeFlutterPluginPlatform.instance.onApproveAuthentication();
+
+  Future<void> handleScannedQrCode({required String qrCode}) =>
+      FuturaeFlutterPluginPlatform.instance.handleScannedQrCode(qrCode: qrCode);
+
+  Future<void> approveAuthWithUserId(
+          {required Map<String, dynamic> authenticationInfo}) =>
+      FuturaeFlutterPluginPlatform.instance
+          .approveAuthWithUserId(authenticationInfo: authenticationInfo);
+
+  Future<void> rejectAuthWithUserId(
+          {required Map<String, dynamic> authenticationInfo}) =>
+      FuturaeFlutterPluginPlatform.instance
+          .rejectAuthWithUserId(authenticationInfo: authenticationInfo);
 }

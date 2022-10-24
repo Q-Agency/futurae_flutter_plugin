@@ -52,6 +52,23 @@ class MockFuturaeFlutterPluginPlatform
   Future<void> handleNotification({required Map<String, dynamic> payload}) {
     throw UnimplementedError();
   }
+
+  @override
+  Future<void> handleScannedQrCode({required String qrCode}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> approveAuthWithUserId(
+      {required Map<String, dynamic> authenticationInfo}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> rejectAuthWithUserId(
+      {required Map<String, dynamic> authenticationInfo}) {
+    throw UnimplementedError();
+  }
 }
 
 void main() {

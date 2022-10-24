@@ -99,4 +99,24 @@ class MethodChannelFuturaeFlutterPlugin extends FuturaeFlutterPluginPlatform {
   @override
   Stream<Map<dynamic, dynamic>> onApproveAuthentication() =>
       _approveAuthenticationStreamController.stream;
+
+  @override
+  Future<void> handleScannedQrCode({required String qrCode}) {
+    return methodChannel
+        .invokeMethod<void>('handleScannedQrCode', {'qrCode': qrCode});
+  }
+
+  @override
+  Future<void> approveAuthWithUserId(
+      {required Map<String, dynamic> authenticationInfo}) {
+    return methodChannel.invokeMethod<void>(
+        'approveAuthWithUserId', {'authenticationInfo': authenticationInfo});
+  }
+
+  @override
+  Future<void> rejectAuthWithUserId(
+      {required Map<String, dynamic> authenticationInfo}) {
+    return methodChannel.invokeMethod<void>(
+        'rejectAuthWithUserId', {'authenticationInfo': authenticationInfo});
+  }
 }

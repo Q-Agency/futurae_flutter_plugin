@@ -65,4 +65,19 @@ abstract class FuturaeFlutterPluginPlatform extends PlatformInterface {
     throw UnimplementedError(
         'onApproveAuthentication() has not been implemented');
   }
+
+  Future<void> handleScannedQrCode({required String qrCode}) {
+    throw UnimplementedError('handleScannedQrCode() has not been implemented');
+  }
+
+  Future<void> approveAuthWithUserId(
+      {required Map<String, dynamic> authenticationInfo}) {
+    throw UnimplementedError(
+        'approveAuthWithUserId() has not been implemented');
+  }
+
+  Future<void> rejectAuthWithUserId(
+      {required Map<String, dynamic> authenticationInfo}) {
+    throw UnimplementedError('rejectAuthWithUserId() has not been implemented');
+  }
 }

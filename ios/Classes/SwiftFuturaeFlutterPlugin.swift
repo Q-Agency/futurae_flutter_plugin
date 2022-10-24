@@ -6,17 +6,21 @@ public class SwiftFuturaeFlutterPlugin: NSObject, FlutterPlugin {
     private struct Constants {
         static let ChannelName = "futurae_flutter_plugin"
         static let GeneralErrorCode = "futurae_flutter_plugin_general_error"
-        static let MissingArgumentsError = "futurae_flutter_plugin_missing_arguments_error"
+        static let MissingArgumentsErrorCode = "futurae_flutter_plugin_missing_arguments_error"
+        static let QrCodeInvalidErrorCode = "futurae_flutter_plugin_invalid_qr_code"
         
         static let SdkIsLaunched = "sdkIsLaunched"
         static let LaunchMethod = "launch"
         static let GetSdkStateMethod = "getSdkState"
         static let GetActiveUnlockMethods = "getActiveUnlockMethods"
-        static let Unlock = "unlock"
+        static let UnlockMethod = "unlock"
         static let EnrollMethod = "enroll"
-        static let RegisterPushToken = "registerPushToken"
-        static let HandleNotification = "handleNotification"
-        static let ApproveAuthenticationReceived = "approveAuthenticationReceived"
+        static let RegisterPushTokenMethod = "registerPushToken"
+        static let HandleNotificationMethod = "handleNotification"
+        static let ApproveAuthenticationReceivedMethod = "approveAuthenticationReceived"
+        static let HandleScannedQrCodeMethod = "handleScannedQrCode"
+        static let ApproveAuthWithUserId = "hpproveAuthWithUserId"
+        static let RejectAuthWithUserId = "rejectAuthWithUserId"
     }
     
     var _channel: FlutterMethodChannel?
@@ -37,14 +41,20 @@ public class SwiftFuturaeFlutterPlugin: NSObject, FlutterPlugin {
             getSdkState(result: result)
         } else if call.method == Constants.GetActiveUnlockMethods {
             getActiveUnlockMethods(result: result)
-        } else if call.method == Constants.Unlock {
+        } else if call.method == Constants.UnlockMethod {
             unlock(callArguments: call.arguments as? [String: Any], result: result)
         } else if call.method == Constants.EnrollMethod {
             enroll(callArguments: call.arguments as? [String: Any], result: result)
-        } else if call.method == Constants.RegisterPushToken {
+        } else if call.method == Constants.RegisterPushTokenMethod {
             registerPushToken(callArguments: call.arguments as? [String: Any], result: result)
-        } else if call.method == Constants.HandleNotification {
+        } else if call.method == Constants.HandleNotificationMethod {
             handleNotification(callArguments: call.arguments as? [String: Any], result: result)
+        } else if call.method == Constants.HandleScannedQrCodeMethod {
+            handleScannedQrCode(callArguments: call.arguments as? [String: Any], result: result)
+        } else if call.method == Constants.ApproveAuthWithUserId {
+            approveAuthWithUserId(callArguments: call.arguments as? [String: Any], result: result)
+        } else if call.method == Constants.RejectAuthWithUserId {
+            rejectAuthWithUserId(callArguments: call.arguments as? [String: Any], result: result)
         } else {
             result(FlutterMethodNotImplemented)
         }
@@ -59,7 +69,7 @@ public class SwiftFuturaeFlutterPlugin: NSObject, FlutterPlugin {
     
     private func launch(callArguments: [String: Any]?, result: @escaping FlutterResult) {
         guard let sdkId = callArguments?["sdkId"] as? String, let sdkKey = callArguments?["sdkKey"] as? String, let baseUrl = callArguments?["baseUrl"] as? String, let lockConfigurationJson = callArguments?["lockConfiguration"] as? [String: Any], let lockConfigurationType = lockConfigurationJson["type"] as? Int else {
-            result(FlutterError(code: Constants.MissingArgumentsError, message: nil, details: nil))
+            result(FlutterError(code: Constants.MissingArgumentsErrorCode, message: nil, details: nil))
             return
         }
         let unlockDuration = (lockConfigurationJson["unlockDuration"] as? Double) ?? 60
@@ -98,7 +108,7 @@ public class SwiftFuturaeFlutterPlugin: NSObject, FlutterPlugin {
     
     private func unlock(callArguments: [String: Any]?, result: @escaping FlutterResult) {
         guard let unlockMethodTypeNumber = callArguments?["unlockMethodType"] as? Int, let unlockMethodType = UnlockMethodType(rawValue: unlockMethodTypeNumber) else {
-            result(FlutterError(code: Constants.MissingArgumentsError, message: nil, details: nil))
+            result(FlutterError(code: Constants.MissingArgumentsErrorCode, message: nil, details: nil))
             return
         }
         let callback = { [weak self] (error: Error?) in
@@ -122,7 +132,7 @@ public class SwiftFuturaeFlutterPlugin: NSObject, FlutterPlugin {
     
     private func enroll(callArguments: [String: Any]?, result: @escaping FlutterResult) {
         guard let qrCode = callArguments?["qrCode"] as? String else {
-            result(FlutterError(code: Constants.MissingArgumentsError, message: nil, details: nil))
+            result(FlutterError(code: Constants.MissingArgumentsErrorCode, message: nil, details: nil))
             return
         }
         FTRClient.shared()?.enroll(qrCode, callback: { [weak self] error in
@@ -136,7 +146,7 @@ public class SwiftFuturaeFlutterPlugin: NSObject, FlutterPlugin {
     
     private func registerPushToken(callArguments: [String: Any]?, result: FlutterResult) {
         guard let pushToken = callArguments?["pushToken"] as? String else {
-            result(FlutterError(code: Constants.MissingArgumentsError, message: nil, details: nil))
+            result(FlutterError(code: Constants.MissingArgumentsErrorCode, message: nil, details: nil))
             return
         }
         FTRClient.shared()?.registerPushToken(Data(pushToken.utf8))
@@ -145,11 +155,75 @@ public class SwiftFuturaeFlutterPlugin: NSObject, FlutterPlugin {
     
     private func handleNotification(callArguments: [String: Any]?, result: FlutterResult) {
         guard let payload = callArguments?["payload"] as? [String: Any] else {
-            result(FlutterError(code: Constants.MissingArgumentsError, message: nil, details: nil))
+            result(FlutterError(code: Constants.MissingArgumentsErrorCode, message: nil, details: nil))
             return
         }
         FTRClient.shared()?.handleNotification(payload, delegate: self)
         result(nil)
+    }
+    
+    private func handleScannedQrCode(callArguments: [String: Any]?, result: @escaping FlutterResult) {
+        guard let qrCode = callArguments?["qrCode"] as? String else {
+            result(FlutterError(code: Constants.MissingArgumentsErrorCode, message: nil, details: nil))
+            return
+        }
+        let qrCodeType = FTRClient.qrCodeType(fromQRCode: qrCode)
+        switch (qrCodeType) {
+        case FTRQRCodeType.enrollment:
+            enroll(callArguments: callArguments, result: result)
+            break
+        case FTRQRCodeType.onlineAuth:
+            approveAuthWithQrCode(callArguments: callArguments, result: result)
+            break
+        case FTRQRCodeType.offlineAuth:
+            result(FlutterMethodNotImplemented)
+            break
+        case FTRQRCodeType.invalid:
+            result(FlutterError(code: Constants.QrCodeInvalidErrorCode, message: "QR Code is invalid", details: nil))
+            break
+        }
+    }
+    
+    private func approveAuthWithQrCode(callArguments: [String: Any]?, result: @escaping FlutterResult) {
+        guard let qrCode = callArguments?["qrCode"] as? String else {
+            result(FlutterError(code: Constants.MissingArgumentsErrorCode, message: nil, details: nil))
+            return
+        }
+        FTRClient.shared()?.approveAuth(withQrCode: qrCode, callback: { [weak self] error in
+            if error != nil {
+                result(FlutterError(code: self?.unwrapErrorCode(error: error) ?? Constants.GeneralErrorCode, message: self?.unwrapErrorMessage(error: error), details: nil))
+            } else {
+                result(nil)
+            }
+        })
+    }
+    
+    private func approveAuthWithUserId(callArguments: [String: Any]?, result: @escaping FlutterResult) {
+        guard let authenticationInfo = callArguments?["authenticationInfo"] as? [String: Any], let userId = authenticationInfo["user_id"] as? String, let sessionId = authenticationInfo["session_id"] as? String else {
+            result(FlutterError(code: Constants.MissingArgumentsErrorCode, message: nil, details: nil))
+            return
+        }
+        FTRClient.shared()?.approveAuth(withUserId: userId, sessionId: sessionId, extraInfo: authenticationInfo["extra_info"] as? [Any], callback: { [weak self] error in
+            if error != nil {
+                result(FlutterError(code: self?.unwrapErrorCode(error: error) ?? Constants.GeneralErrorCode, message: self?.unwrapErrorMessage(error: error), details: nil))
+            } else {
+                result(nil)
+            }
+        })
+    }
+    
+    private func rejectAuthWithUserId(callArguments: [String: Any]?, result: @escaping FlutterResult) {
+        guard let authenticationInfo = callArguments?["authenticationInfo"] as? [String: Any], let userId = authenticationInfo["user_id"] as? String, let sessionId = authenticationInfo["session_id"] as? String else {
+            result(FlutterError(code: Constants.MissingArgumentsErrorCode, message: nil, details: nil))
+            return
+        }
+        FTRClient.shared()?.rejectAuth(withUserId: userId, sessionId: sessionId, isFraud: false, extraInfo: authenticationInfo["extra_info"] as? [Any], callback: { [weak self] error in
+            if error != nil {
+                result(FlutterError(code: self?.unwrapErrorCode(error: error) ?? Constants.GeneralErrorCode, message: self?.unwrapErrorMessage(error: error), details: nil))
+            } else {
+                result(nil)
+            }
+        })
     }
     
     private func unwrapErrorMessage(error: Error?) -> String? {
@@ -166,7 +240,7 @@ public class SwiftFuturaeFlutterPlugin: NSObject, FlutterPlugin {
 
 extension SwiftFuturaeFlutterPlugin: FTRNotificationDelegate {
     public func approveAuthenticationReceived(_ authenticationInfo: [AnyHashable : Any]) {
-        _channel?.invokeMethod(Constants.ApproveAuthenticationReceived, arguments: authenticationInfo)
+        _channel?.invokeMethod(Constants.ApproveAuthenticationReceivedMethod, arguments: authenticationInfo)
     }
     
     public func unenrollUserReceived(_ accountInfo: [AnyHashable : Any]) {
