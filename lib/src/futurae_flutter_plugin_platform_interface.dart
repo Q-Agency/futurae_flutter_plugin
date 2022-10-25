@@ -1,4 +1,5 @@
 import 'package:futurae_flutter_plugin/futurae_flutter_plugin.dart';
+import 'package:futurae_flutter_plugin/src/models/futurae_account.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 abstract class FuturaeFlutterPluginPlatform extends PlatformInterface {
@@ -79,5 +80,14 @@ abstract class FuturaeFlutterPluginPlatform extends PlatformInterface {
   Future<void> rejectAuthWithUserId(
       {required Map<String, dynamic> authenticationInfo}) {
     throw UnimplementedError('rejectAuthWithUserId() has not been implemented');
+  }
+
+  Future<List<FuturaeAccount>> getAccounts() {
+    throw UnimplementedError('getAccounts() has not been implemented');
+  }
+
+  Future<List<FuturaeAccount>> getAccountsStatus(
+      {required List<FuturaeAccount> accounts}) {
+    throw UnimplementedError('getAccountsStatus() has not been implemented');
   }
 }

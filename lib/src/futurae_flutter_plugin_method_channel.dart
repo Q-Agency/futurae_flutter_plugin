@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:futurae_flutter_plugin/futurae_flutter_plugin.dart';
+import 'package:futurae_flutter_plugin/src/models/futurae_account.dart';
 
 /// An implementation of [FuturaeFlutterPluginPlatform] that uses method channels.
 class MethodChannelFuturaeFlutterPlugin extends FuturaeFlutterPluginPlatform {
@@ -118,5 +119,29 @@ class MethodChannelFuturaeFlutterPlugin extends FuturaeFlutterPluginPlatform {
       {required Map<String, dynamic> authenticationInfo}) {
     return methodChannel.invokeMethod<void>(
         'rejectAuthWithUserId', {'authenticationInfo': authenticationInfo});
+  }
+
+  @override
+  Future<List<FuturaeAccount>> getAccounts() async {
+    final result =
+        await methodChannel.invokeMethod<Map<dynamic, dynamic>>('getAccounts');
+    final List<dynamic>? accountsList = result?['accounts'];
+    return accountsList
+            ?.map((e) => FuturaeAccount.fromJson(Map<String, dynamic>.from(e)))
+            .toList() ??
+        [];
+  }
+
+  @override
+  Future<List<FuturaeAccount>> getAccountsStatus(
+      {required List<FuturaeAccount> accounts}) async {
+    final result = await methodChannel.invokeMethod<Map<dynamic, dynamic>>(
+        'getAccountsStatus',
+        {'accounts': accounts.map((e) => e.toJson()).toList()});
+    final List<dynamic>? accountsList = result?['accounts'];
+    return accountsList
+            ?.map((e) => FuturaeAccount.fromJson(Map<String, dynamic>.from(e)))
+            .toList() ??
+        [];
   }
 }

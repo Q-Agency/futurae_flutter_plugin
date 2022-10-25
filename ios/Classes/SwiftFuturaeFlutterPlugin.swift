@@ -21,6 +21,8 @@ public class SwiftFuturaeFlutterPlugin: NSObject, FlutterPlugin {
         static let HandleScannedQrCodeMethod = "handleScannedQrCode"
         static let ApproveAuthWithUserId = "hpproveAuthWithUserId"
         static let RejectAuthWithUserId = "rejectAuthWithUserId"
+        static let GetAccounts = "getAccounts"
+        static let GetAccountsStatus = "getAccountsStatus"
     }
     
     var _channel: FlutterMethodChannel?
@@ -55,6 +57,10 @@ public class SwiftFuturaeFlutterPlugin: NSObject, FlutterPlugin {
             approveAuthWithUserId(callArguments: call.arguments as? [String: Any], result: result)
         } else if call.method == Constants.RejectAuthWithUserId {
             rejectAuthWithUserId(callArguments: call.arguments as? [String: Any], result: result)
+        } else if call.method == Constants.GetAccounts {
+            getAccounts(result: result)
+        } else if call.method == Constants.GetAccountsStatus {
+            getAccountsStatus(callArguments: call.arguments as? [String: Any], result: result)
         } else {
             result(FlutterMethodNotImplemented)
         }
@@ -226,6 +232,51 @@ public class SwiftFuturaeFlutterPlugin: NSObject, FlutterPlugin {
         })
     }
     
+    private func getAccounts(result: FlutterResult) {
+        guard let accounts = FTRClient.shared()?.getAccounts() else {
+            result(FlutterError(code: Constants.GeneralErrorCode, message: nil, details: nil))
+            return
+        }
+        result(["accounts": accounts.map({ account in
+            return [
+                "user_id": account.user_id ?? "",
+                "username": account.username ?? "",
+                "ft_api_server_base_url": account.ft_api_server_base_url ?? "",
+                "enrolled": account.enrolled,
+                "device_token": account.device_token as Any,
+                "service_id": account.service_id ?? "",
+                "device_id": account.device_id ?? "",
+                "service_name": account.service_name ?? "",
+                "enrolled_at": account.enrolled_at as Any,
+                "updated_at": account.updated_at as Any,
+                "totp_seed": account.totp_seed as Any,
+                "encrypted_dt_totp": account.encrypted_dt_totp as Any,
+                "service_logo": account.service_logo as Any,
+                "sessions": account.sessions as Any,
+                "logout_pending": account.logout_pending
+            ]
+        })])
+    }
+    
+    private func getAccountsStatus(callArguments: [String: Any]?, result: @escaping FlutterResult) {
+        guard let accountsJson = callArguments?["accounts"] as? [[String: Any]] else {
+            result(FlutterError(code: Constants.MissingArgumentsErrorCode, message: nil, details: nil))
+            return
+        }
+        guard !accountsJson.isEmpty else {
+            result(["accounts": nil])
+            return
+        }
+        let accounts = accountsJson.map { accountJson in
+            return FTRAccount(dictionary: accountJson)!
+        }
+        FTRClient.shared()?.getAccountsStatus(accounts, success: { data in
+            result(data)
+        }, failure: { [weak self] error in
+            result(FlutterError(code: self?.unwrapErrorCode(error: error) ?? Constants.GeneralErrorCode, message: self?.unwrapErrorMessage(error: error), details: nil))
+        })
+    }
+        
     private func unwrapErrorMessage(error: Error?) -> String? {
         return (error as? NSError)?.userInfo["msg"] as? String
     }

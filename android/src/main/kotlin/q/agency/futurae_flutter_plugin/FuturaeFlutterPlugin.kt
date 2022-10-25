@@ -10,6 +10,11 @@ import io.flutter.plugin.common.MethodChannel.Result
 
 /** FuturaeFlutterPlugin */
 class FuturaeFlutterPlugin: FlutterPlugin, MethodCallHandler {
+  private companion object {
+    const val CHANNEL_NAME = "futurae_flutter_plugin"
+    const val GENERAL_ERROR_CODE = "futurae_flutter_plugin_general_error"
+  }
+
   /// The MethodChannel that will the communication between Flutter and native Android
   ///
   /// This local reference serves to register the plugin with the Flutter Engine and unregister it
@@ -22,8 +27,8 @@ class FuturaeFlutterPlugin: FlutterPlugin, MethodCallHandler {
   }
 
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
-    if (call.method == "getPlatformVersion") {
-      result.success("Android ${android.os.Build.VERSION.RELEASE}")
+    if (call.method == "sdkIsLaunched") {
+      sdkIsLaunched(call, result);
     } else {
       result.notImplemented()
     }
@@ -31,5 +36,9 @@ class FuturaeFlutterPlugin: FlutterPlugin, MethodCallHandler {
 
   override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
     channel.setMethodCallHandler(null)
+  }
+
+  private fun sdkIsLaunched(call: MethodCall, result: Result) {
+    result.success(mapOf("isLaunched" to true));
   }
 }

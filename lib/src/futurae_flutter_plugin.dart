@@ -1,4 +1,5 @@
 import 'package:futurae_flutter_plugin/futurae_flutter_plugin.dart';
+import 'package:futurae_flutter_plugin/src/models/futurae_account.dart';
 
 class FuturaeFlutterPlugin {
   Future<bool> sdkIsLaunched() {
@@ -54,4 +55,12 @@ class FuturaeFlutterPlugin {
           {required Map<String, dynamic> authenticationInfo}) =>
       FuturaeFlutterPluginPlatform.instance
           .rejectAuthWithUserId(authenticationInfo: authenticationInfo);
+
+  Future<List<FuturaeAccount>> getAccounts() =>
+      FuturaeFlutterPluginPlatform.instance.getAccounts();
+
+  Future<List<FuturaeAccount>> getAccountsStatus(
+          {required List<FuturaeAccount> accounts}) =>
+      FuturaeFlutterPluginPlatform.instance
+          .getAccountsStatus(accounts: accounts);
 }

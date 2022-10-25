@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:futurae_flutter_plugin/futurae_flutter_plugin.dart';
+import 'package:futurae_flutter_plugin/src/models/futurae_account.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 class MockFuturaeFlutterPluginPlatform
@@ -67,6 +68,17 @@ class MockFuturaeFlutterPluginPlatform
   @override
   Future<void> rejectAuthWithUserId(
       {required Map<String, dynamic> authenticationInfo}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<FuturaeAccount>> getAccounts() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<FuturaeAccount>> getAccountsStatus(
+      {required List<FuturaeAccount> accounts}) {
     throw UnimplementedError();
   }
 }

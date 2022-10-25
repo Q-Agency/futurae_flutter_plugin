@@ -19,5 +19,7 @@ void main() {
     channel.setMockMethodCallHandler(null);
   });
 
-  test('sdkIsLaunched', () async {});
+  test('sdkIsLaunched', () async {
+    expect(await platform.sdkIsLaunched(), true);
+  });
 }

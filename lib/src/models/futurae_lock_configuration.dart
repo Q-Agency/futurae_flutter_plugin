@@ -1,9 +1,11 @@
-class FuturaeLockConfiguration {
+import 'package:equatable/equatable.dart';
+
+class FuturaeLockConfiguration extends Equatable {
   final FuturaeLockConfigurationType type;
   final num? unlockDuration;
   final bool? invalidatedByBiometricsChange;
 
-  FuturaeLockConfiguration({
+  const FuturaeLockConfiguration({
     required this.type,
     this.unlockDuration,
     this.invalidatedByBiometricsChange,
@@ -14,6 +16,13 @@ class FuturaeLockConfiguration {
         'unlockDuration': unlockDuration,
         'invalidatedByBiometricsChange': invalidatedByBiometricsChange,
       };
+
+  @override
+  List<Object?> get props =>
+      [type, unlockDuration, invalidatedByBiometricsChange];
+
+  @override
+  bool? get stringify => true;
 }
 
 enum FuturaeLockConfigurationType {
