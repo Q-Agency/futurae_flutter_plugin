@@ -265,8 +265,8 @@ class FuturaeFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
       "service_id" to ftAccount.serviceId,
       "device_id" to ftAccount.deviceId,
       "service_name" to ftAccount.serviceName,
-      "enrolled_at" to ftAccount.enrolledAt,
-      "updated_at" to ftAccount.updatedAt,
+      "enrolled_at" to ftAccount.enrolledAt.toString(),
+      "updated_at" to ftAccount.updatedAt.toString(),
       "allowed_factors" to ftAccount.allowedFactors
     )
     }))
@@ -297,7 +297,7 @@ class FuturaeFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
           "service_id" to "",
           "device_id" to "",
           "service_name" to "",
-          "enrolled_at" to accountStatus.enrolledAt,
+          "enrolled_at" to accountStatus.enrolledAt.toString(),
           "service_logo" to accountStatus.serviceLogo,
           "sessions" to accountStatus.sessionInfos.map { sessionInfo ->
             mapOf(
