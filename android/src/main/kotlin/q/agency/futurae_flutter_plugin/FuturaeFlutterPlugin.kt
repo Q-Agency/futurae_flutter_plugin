@@ -16,6 +16,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
+import java.text.SimpleDateFormat
 
 
 /** FuturaeFlutterPlugin */
@@ -34,6 +35,7 @@ class FuturaeFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
   private lateinit var channel : MethodChannel
   private lateinit var activity : Activity
   private var sdkIsLaunched = false
+  private val isoFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'")
 
   override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, CHANNEL_NAME)
@@ -267,8 +269,8 @@ class FuturaeFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
       "service_id" to ftAccount.serviceId,
       "device_id" to ftAccount.deviceId,
       "service_name" to ftAccount.serviceName,
-      "enrolled_at" to ftAccount.enrolledAt.toString(),
-      "updated_at" to ftAccount.updatedAt.toString(),
+      "enrolled_at" to isoFormat.format(ftAccount.enrolledAt),
+      "updated_at" to isoFormat.format(ftAccount.updatedAt),
       "allowed_factors" to ftAccount.allowedFactors
     )
     }))
@@ -299,7 +301,7 @@ class FuturaeFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
           "service_id" to "",
           "device_id" to "",
           "service_name" to "",
-          "enrolled_at" to accountStatus.enrolledAt.toString(),
+          "enrolled_at" to isoFormat.format(accountStatus.enrolledAt.toString()),
           "service_logo" to accountStatus.serviceLogo,
           "sessions" to accountStatus.sessionInfos.map { sessionInfo ->
             mapOf(
