@@ -33,6 +33,7 @@ class FuturaeFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
   /// when the Flutter Engine is detached from the Activity
   private lateinit var channel : MethodChannel
   private lateinit var activity : Activity
+  private var sdkIsLaunched = false
 
   override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, CHANNEL_NAME)
@@ -62,7 +63,7 @@ class FuturaeFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
   }
 
   private fun sdkIsLaunched(result: Result) {
-    result.success(mapOf("isLaunched" to true));
+    result.success(mapOf("isLaunched" to sdkIsLaunched));
   }
 
   private fun launch(call: MethodCall, result: Result) {
@@ -87,6 +88,7 @@ class FuturaeFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
           .setInvalidatedByBiometricChange(invalidatedByBiometricsChange)
           .build()
       )
+      sdkIsLaunched = true
       result.success(null)
     } catch (fte: FTException) {
       println(fte.stackTraceToString());
