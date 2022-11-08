@@ -301,7 +301,7 @@ class FuturaeFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
           "service_id" to "",
           "device_id" to "",
           "service_name" to "",
-          "enrolled_at" to isoFormat.format(accountStatus.enrolledAt.toString()),
+          "enrolled_at" to isoFormat.format(accountStatus.enrolledAt),
           "service_logo" to accountStatus.serviceLogo,
           "sessions" to accountStatus.sessionInfos.map { sessionInfo ->
             mapOf(
