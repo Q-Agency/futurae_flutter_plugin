@@ -6,9 +6,6 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        flatDir {
-            dirs 'libs'
-        }
     }
 
     dependencies {
@@ -21,6 +18,9 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        flatDir {
+            dirs 'libs'
+        }
     }
 }
 
@@ -55,9 +55,9 @@ dependencies {
     implementation "com.squareup.moshi:moshi-kotlin:1.6.0"
     implementation 'com.squareup.okhttp3:okhttp:4.10.0'
     implementation 'com.github.nisrulz:easydeviceinfo-base:2.4.1'
-    implementation 'com.google.code.gson:gson:2.8.9'
+    implementation 'com.google.code.gson:gson:2.9.1'
     implementation "androidx.biometric:biometric:1.1.0"
     implementation "androidx.security:security-crypto:1.0.0"
     implementation "com.nimbusds:nimbus-jose-jwt:9.25.6"
-    implementation files('libs/futuraekit_2.0.1.aar')
+    implementation fileTree(dir: 'libs', include: ['*.aar'])
 }
