@@ -1,5 +1,4 @@
 import 'package:futurae_flutter_plugin/futurae_flutter_plugin.dart';
-import 'package:futurae_flutter_plugin/src/models/futurae_account.dart';
 
 class FuturaeFlutterPlugin {
   Future<bool> sdkIsLaunched() {

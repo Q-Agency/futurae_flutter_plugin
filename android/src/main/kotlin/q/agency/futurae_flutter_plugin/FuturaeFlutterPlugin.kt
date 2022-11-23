@@ -97,7 +97,12 @@ class FuturaeFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
       result.error("FuturaeSDKError", fte.message, null)
     } catch (e: Exception) {
       println(e.stackTraceToString());
-      result.error(GENERAL_ERROR_CODE, e.message, null)
+      if (e.message?.startsWith("SDK Already initialized") == true) {
+        sdkIsLaunched = true
+        result.success(null)
+      } else {
+        result.error(GENERAL_ERROR_CODE, e.message, null)
+      }
     }
   }
 

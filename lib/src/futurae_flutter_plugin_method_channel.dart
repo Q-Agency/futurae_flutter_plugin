@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:futurae_flutter_plugin/futurae_flutter_plugin.dart';
-import 'package:futurae_flutter_plugin/src/models/futurae_account.dart';
 
 /// An implementation of [FuturaeFlutterPluginPlatform] that uses method channels.
 class MethodChannelFuturaeFlutterPlugin extends FuturaeFlutterPluginPlatform {

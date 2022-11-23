@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:futurae_flutter_plugin/futurae_flutter_plugin.dart';
-import 'package:futurae_flutter_plugin/src/models/futurae_account.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 class MockFuturaeFlutterPluginPlatform
