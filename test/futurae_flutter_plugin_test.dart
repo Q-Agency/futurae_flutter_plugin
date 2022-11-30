@@ -80,6 +80,11 @@ class MockFuturaeFlutterPluginPlatform
       {required List<FuturaeAccount> accounts}) {
     throw UnimplementedError();
   }
+
+  @override
+  Future<void> logoutWithUserId({required String userId}) {
+    throw UnimplementedError();
+  }
 }
 
 void main() {

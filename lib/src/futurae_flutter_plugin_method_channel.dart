@@ -143,4 +143,10 @@ class MethodChannelFuturaeFlutterPlugin extends FuturaeFlutterPluginPlatform {
             .toList() ??
         [];
   }
+
+  @override
+  Future<void> logoutWithUserId({required String userId}) {
+    return methodChannel
+        .invokeMethod<void>('logoutWithUserId', {'userId': userId});
+  }
 }

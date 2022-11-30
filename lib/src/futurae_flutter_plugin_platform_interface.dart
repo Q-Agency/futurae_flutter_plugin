@@ -89,4 +89,8 @@ abstract class FuturaeFlutterPluginPlatform extends PlatformInterface {
       {required List<FuturaeAccount> accounts}) {
     throw UnimplementedError('getAccountsStatus() has not been implemented');
   }
+
+  Future<void> logoutWithUserId({required String userId}) {
+    throw UnimplementedError('logoutWithUserId() has not been implemented');
+  }
 }

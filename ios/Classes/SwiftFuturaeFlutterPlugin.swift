@@ -23,6 +23,7 @@ public class SwiftFuturaeFlutterPlugin: NSObject, FlutterPlugin {
         static let RejectAuthWithUserId = "rejectAuthWithUserId"
         static let GetAccounts = "getAccounts"
         static let GetAccountsStatus = "getAccountsStatus"
+        static let LogoutWithUserId = "logoutWithUserId"
     }
     
     var _channel: FlutterMethodChannel?
@@ -61,6 +62,8 @@ public class SwiftFuturaeFlutterPlugin: NSObject, FlutterPlugin {
             getAccounts(result: result)
         } else if call.method == Constants.GetAccountsStatus {
             getAccountsStatus(callArguments: call.arguments as? [String: Any], result: result)
+        } else if call.method == Constants.LogoutWithUserId {
+            logoutWithUserId(callArguments: call.arguments as? [String: Any], result: result)
         } else {
             result(FlutterMethodNotImplemented)
         }
@@ -274,6 +277,20 @@ public class SwiftFuturaeFlutterPlugin: NSObject, FlutterPlugin {
             result(data)
         }, failure: { [weak self] error in
             result(FlutterError(code: self?.unwrapErrorCode(error: error) ?? Constants.GeneralErrorCode, message: self?.unwrapErrorMessage(error: error), details: nil))
+        })
+    }
+    
+    private func logoutWithUserId(callArguments: [String: Any]?, result: @escaping FlutterResult) {
+        guard let userId = callArguments?["userId"] as? String else {
+            result(FlutterError(code: Constants.MissingArgumentsErrorCode, message: nil, details: nil))
+            return
+        }
+        FTRClient.shared()?.logoutUser(userId, callback: { [weak self] error in
+            if error != nil {
+                result(FlutterError(code: self?.unwrapErrorCode(error: error) ?? Constants.GeneralErrorCode, message: self?.unwrapErrorMessage(error: error), details: nil))
+            } else {
+                result(nil)
+            }
         })
     }
         

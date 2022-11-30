@@ -62,4 +62,7 @@ class FuturaeFlutterPlugin {
           {required List<FuturaeAccount> accounts}) =>
       FuturaeFlutterPluginPlatform.instance
           .getAccountsStatus(accounts: accounts);
+
+  Future<void> logoutWithUserId({required String userId}) =>
+      FuturaeFlutterPluginPlatform.instance.logoutWithUserId(userId: userId);
 }

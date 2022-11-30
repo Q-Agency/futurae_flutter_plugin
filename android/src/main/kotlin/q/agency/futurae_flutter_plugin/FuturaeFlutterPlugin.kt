@@ -56,6 +56,7 @@ class FuturaeFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
       "rejectAuthWithUserId" -> rejectAuthWithUserId(call, result)
       "getAccounts" -> getAccounts(result)
       "getAccountsStatus" -> getAccountsStatus(call, result)
+      "logoutWithUserId" -> logoutWithUserId(call, result)
       else -> result.notImplemented()
     }
   }
@@ -333,6 +334,22 @@ class FuturaeFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
     })
   }
 
+  private fun logoutWithUserId(call: MethodCall, result: Result) {
+    val userId = call.argument<String>("userId")
+    if (userId == null) {
+      result.error(MISSING_ARGUMENTS_ERROR_CODE, null, null)
+      return
+    }
+    FuturaeSDK.INSTANCE.client.logout(userId, object : FuturaeCallback {
+      override fun success() {
+        result.success(null)
+      }
+
+      override fun failure(throwable: Throwable?) {
+        result.error(GENERAL_ERROR_CODE, throwable?.message, null)
+      }
+    })
+  }
 
   override fun onDetachedFromActivityForConfigChanges() {
 
